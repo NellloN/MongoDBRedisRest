@@ -31,7 +31,7 @@ export const findDocuments = function (db, collectionName, filter, pageSize, ski
         });
 }
 
-export const findDocument = function (db, collectionName, id, filter, pageSize, skip, sort, callback) {
+export const findDocument = function (db, collectionName, id, callback) {
     if (!db) {
         if (callback) {
             callback();
@@ -46,31 +46,20 @@ export const findDocument = function (db, collectionName, id, filter, pageSize, 
         return;
     }
 
-    filter = filter || {};
-    pageSize = pageSize || 50;
-    skip = skip || 0;
-    sort = sort || {};
-
     const collection = db.collection(collectionName);
     const mongoId = new ObjectId(id);
-    collection
-        .find({ _id: mongoId })
-        .find(filter)
-        .limit(pageSize)
-        .skip(skip)
-        .sort(sort)
-        .toArray(function (err, docs) {
-            console.log("Found the following records");
-            console.log(docs);
+    collection.find({ _id: mongoId }).toArray(function (err, docs) {
+        console.log("Found the following records");
+        console.log(docs);
 
-            if (callback) {
-                if (docs) {
-                    callback(docs[0]);
-                } else {
-                    callback();
-                }
+        if (callback) {
+            if (docs) {
+                callback(docs[0]);
+            } else {
+                callback();
             }
-        });
+        }
+    });
 }
 
 export const connect = function (configName, callback) {

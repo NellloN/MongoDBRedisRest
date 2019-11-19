@@ -19,7 +19,7 @@ app.get('/:configName/:collection/:id?', function (req, res) {
 
   dataAccess.connect(configName, (db) => {
     if (id) {
-      dataAccess.findDocument(db, collection, id, filter, pageSize, skip, sort, (document) => {
+      dataAccess.findDocument(db, collection, id, (document) => {
         if (document) {
           res.send(document);
         } else {
