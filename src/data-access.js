@@ -1,24 +1,87 @@
 const config = require('../config.json');
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient, ObjectId } = require('mongodb');
 const assert = require('assert');
 
-const findDocuments = function (db, collectionName, callback) {
-    // Get the documents collection
-    const collection = db.collection(collectionName);
-    // Find some documents
-    collection.find({}).toArray(function (err, docs) {
-        assert.equal(err, null);
-        console.log("Found the following records");
-        console.log(docs);
-
+export const findDocuments = function (db, collectionName, filter, pageSize, skip, sort, callback) {
+    if (!db) {
         if (callback) {
-            callback(docs);
+            callback();
         }
-    });
+        return;
+    }
+
+    filter = filter || {};
+    pageSize = pageSize || 50;
+    skip = skip || 0;
+    sort = sort || {};
+
+    const collection = db.collection(collectionName);
+    collection
+        .find(filter)
+        .limit(pageSize)
+        .skip(skip)
+        .sort(sort)
+        .toArray(function (err, docs) {
+            console.log("Found the following records");
+            console.log(docs);
+
+            if (callback) {
+                callback(docs);
+            }
+        });
 }
 
-const connect = function (configName, callback) {
+export const findDocument = function (db, collectionName, id, filter, pageSize, skip, sort, callback) {
+    if (!db) {
+        if (callback) {
+            callback();
+        }
+        return;
+    }
+
+    if (!ObjectId.isValid(id)) {
+        if (callback) {
+            callback();
+        }
+        return;
+    }
+
+    filter = filter || {};
+    pageSize = pageSize || 50;
+    skip = skip || 0;
+    sort = sort || {};
+
+    const collection = db.collection(collectionName);
+    const mongoId = new ObjectId(id);
+    collection
+        .find({ _id: mongoId })
+        .find(filter)
+        .limit(pageSize)
+        .skip(skip)
+        .sort(sort)
+        .toArray(function (err, docs) {
+            console.log("Found the following records");
+            console.log(docs);
+
+            if (callback) {
+                if (docs) {
+                    callback(docs[0]);
+                } else {
+                    callback();
+                }
+            }
+        });
+}
+
+export const connect = function (configName, callback) {
     const dbConfig = config['mongodb'][configName];
+
+    if (!dbConfig) {
+        if (callback) {
+            callback();
+        }
+        return;
+    }
 
     // Connection URL
     const url = dbConfig.url;
@@ -43,5 +106,3 @@ const connect = function (configName, callback) {
         client.close();
     });
 };
-
-export {findDocuments, connect};
