@@ -1,5 +1,3 @@
-require("babel-core/register");
-
 const express = require('express');
 const app = express();
 const config = require('../config.json');
@@ -22,5 +20,5 @@ app.use('/', (_, res) => {
 });
 
 app.listen(config.port, function () {
-  console.log(`Example app listening on port ${config.port}.`);
+  console.log(`Server app listening on port ${config.port}.`);
 });

@@ -13,7 +13,8 @@ export const getAllCollections = function (db, callback) {
             callback(err, collections || []);
         }
     });
-}
+};
+
 export const findDocuments = function (db, collectionName, filter, pageSize, skip, sort, callback) {
     if (!db) {
         if (callback) {
@@ -38,7 +39,7 @@ export const findDocuments = function (db, collectionName, filter, pageSize, ski
                 callback(err, docs);
             }
         });
-}
+};
 
 export const findDocument = function (db, collectionName, id, callback) {
     if (!ObjectId.isValid(id)) {
@@ -67,7 +68,7 @@ export const findDocument = function (db, collectionName, id, callback) {
             }
         }
     })
-}
+};
 
 export const connect = function (configName, callback) {
     let dbConfig = null;
@@ -114,4 +115,4 @@ export const getAllConfigs = function () {
     }
 
     return dbConfigs;
-}
+};

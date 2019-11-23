@@ -7,14 +7,14 @@ router.get('/:configName/:collection/:id', (req, res) => {
     const collection = req.params.collection;
     const id = req.params.id;
 
-    mongodbDataAccess.connect(configName, (db) => {
+    mongodbDataAccess.connect(configName, (err, db) => {
         if (err) {
             res.status(400);
             res.send(err);
             console.error(err);
             return;
         }
-        mongodbDataAccess.findDocument(db, collection, id, (document) => {
+        mongodbDataAccess.findDocument(db, collection, id, (err, document) => {
             if (err) {
                 res.status(400);
                 res.send(err);
@@ -81,7 +81,7 @@ router.get('/:configName', function (req, res) {
             }
 
             const urls = collections.map(c => c.name).sort().map(cn => `<li><a href="/mongodb/${configName}/${cn}">${cn}</a></li>`);
-            const html =  `<ul>${urls.join('')}</ul>`
+            const html = `<ul>${urls.join('')}</ul>`
             res.send(html);
         });
     });
@@ -89,7 +89,7 @@ router.get('/:configName', function (req, res) {
 
 router.get('/', (_, res) => {
     const urls = mongodbDataAccess.getAllConfigs().map(cn => `<li><a href="/mongodb/${cn}">${cn}</a></li>`);
-    const html =  `<ul>${urls.join('')}</ul>`
+    const html = `<ul>${urls.join('')}</ul>`
     res.send(html);
 });
 
